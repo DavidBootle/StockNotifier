@@ -1,6 +1,7 @@
 {
-    "sendingAddress": {
-        "address": "",
+    "smtpServer": {
+        "url": "",
+        "login": "",
         "password": "",
         "port": 465
     }
