@@ -4,5 +4,9 @@
         "login": "",
         "password": "",
         "port": 465
+    },
+    "sendFrom": {
+        "displayName": "",
+        "emailAddress": ""
     }
 }
