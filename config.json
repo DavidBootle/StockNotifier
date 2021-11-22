@@ -1,6 +1,7 @@
 {
     "sendingAddress": {
         "address": "",
-        "password": ""
+        "password": "",
+        "port": 465
     }
 }
