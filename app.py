@@ -1,6 +1,7 @@
 import json
 import sys
 from emailmanager import EmailManager
+from seleniummanager import SeleniumManager
 
 # Load json config
 
@@ -12,7 +13,7 @@ class App:
         self.email_manager = EmailManager(self.config['smtpServer'], self.config['sendFrom'])
 
     def load_config_file(self):
-        # load config from config.json
+        '''Loads and validates config information from config.json.'''
         try:
             with open('config.json') as config_file:
                 try:
@@ -30,8 +31,11 @@ class App:
         except FileNotFoundError:
             print("ERROR: Must have a config.json file in the application directory.")
             sys.exit()
+        
+        # start loading sites
 
     def run(self):
+        '''Starts running the app. This includes starting up webdrivers and actively performing testing.'''
         pass
 
 if __name__ == "__main__":
