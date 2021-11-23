@@ -15,7 +15,7 @@ class EmailManager:
             text_body=body
         )
 
-        email.send(self.url, port=self.port, login=self.login, password=self.password, tls=True)
+        return email.send(self.url, port=self.port, login=self.login, password=self.password, tls=True)
 
     def verify_options(self, smtp_options, sender_options):
         if not smtp_options.get('url'):
