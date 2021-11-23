@@ -34,4 +34,6 @@ class App:
     def run(self):
         pass
 
-app = App()
+if __name__ == "__main__":
+    app = App()
+    print('doing things!')
