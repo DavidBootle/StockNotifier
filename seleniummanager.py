@@ -81,8 +81,10 @@ class SeleniumManager:
 
         Error Message: {message}
         '''
-        # TODO send email
+        for recipient in self.send_to:
+            self.email_manager.send_email(recipient['email_address'], recipient['display_name'], subject, message)
         print(message)
+        self.stop()
     
     def success_response(self):
         '''This function triggers when the test criteria are met. It should stop the webdriver and send an email.'''
