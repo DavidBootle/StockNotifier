@@ -76,13 +76,13 @@ class SeleniumManager:
     def failure_response(self, message: str):
         '''This function defines how the program should respond to an error.''' 
         subject = f'Error Notification for "{self.name}"'
-        message = f'''
+        email_message = f'''
         This is an error notification for the site "{self.name}". An error was encountered while testing, and testing for this site has been stopped.
 
         Error Message: {message}
         '''
         for recipient in self.send_to:
-            self.email_manager.send_email(recipient['email_address'], recipient['display_name'], subject, message)
+            self.email_manager.send_email(recipient['email_address'], recipient['display_name'], subject, email_message)
         print(message)
         self.stop()
     
