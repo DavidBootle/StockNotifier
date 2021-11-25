@@ -63,16 +63,19 @@ class App:
                     'email_address': email_address,
                     'display_name': display_name
                 })
-                self.selenium_managers[site_name] = SeleniumManager(
-                    contents['name'],
-                    contents['url'], 
-                    contents['elementXPath'],
-                    contents['testType'],
-                    contents['compareValue'],
-                    send_to,
-                    contents['reloadTime'],
-                    contents['waitTime'],
-                    self.email_manager)
+            send_url = contents.get('sendURL')
+            send_url = send_url if send_url else contents['url']
+            self.selenium_managers[site_name] = SeleniumManager(
+                contents['name'],
+                contents['url'], 
+                contents['elementXPath'],
+                contents['testType'],
+                contents['compareValue'],
+                send_to,
+                contents['reloadTime'],
+                contents['waitTime'],
+                self.email_manager,
+                send_url)
     
     def validate_site_config(self, config: dict[str, any], file_name):
         if not config.get("name"):
@@ -111,11 +114,19 @@ class App:
 
     def run(self):
         '''Starts running the app. This includes starting up webdrivers and actively performing testing.'''
-        
         # start selenium managers
         for key in self.selenium_managers:
             self.selenium_managers[key].start()
-            asyncio.run(self.selenium_managers[key].run())
+            try:
+                asyncio.run(self.selenium_managers[key].run())
+            except Exception as error:
+                app.email_manager.send_email('davidtbootle@gmail.com', 'David Bootle', 'Stock Notfier CRITICAL ERROR', f'''
+                Stock Notifier has encountered a critical error! Check server ASAP!
+                
+                Error Type: {type(error)}
+                Error Message: {error}
+                ''')
+                raise error
 
 if __name__ == "__main__":
     print('Starting app!')
