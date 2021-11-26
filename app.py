@@ -51,7 +51,8 @@ class App:
             sys.exit()
         sites = sites_dir.glob('*.json')
         for site in sites:
-            self.site_managers.append(SiteManager(self.driver, site, self.email_manager))
+            if site.name[0] != '.': # skip files with a .name
+                self.site_managers.append(SiteManager(self.driver, site, self.email_manager))
 
     def run(self):
         '''Starts running the app. This includes starting up webdrivers and actively performing testing.'''

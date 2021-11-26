@@ -96,5 +96,7 @@ The `sendTo` parameter is a list of objects, where each object should contain tw
 
 The `sendURL` parameter can be used to override which link is sent in the email when success is triggered. By default, the link sent is the `url` parameter.
 
+The name of the file doesn't matter, but files starting with `.` will be ignored by the program. You can use this to easily enable and disable sites.
+
 # Running
 Run the program by running `app.py` with Python 3.10.
