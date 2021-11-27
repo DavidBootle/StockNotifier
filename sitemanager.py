@@ -5,6 +5,7 @@ from emailmanager import EmailManager
 import sys
 from pathlib import Path
 import json
+import datetime
 
 class SiteManager:
 
@@ -108,12 +109,15 @@ class SiteManager:
 
         match type(exception):
             case selenium_exceptions.NoSuchElementException:
-                message_end = "The element could not be found on the page. This could be because the time the page takes to load exceeds the page wait time, or that your XPath is invalid. Check your configuration."
+                diagnostic_name = self.save_diagnostic_data()
+                message_end = f"The element could not be found on the page. This could be because the time the page takes to load exceeds the page wait time, or that your XPath is invalid. Check your configuration. Diagnostic data for this error has been saved to diagnostics/{diagnostic_name}"
             case selenium_exceptions.WebDriverException:
-                message_end = f"A WebDriverException occurred. This is most likely because it failed to get the page. Check your network settings! The error message is printed below:\n{exception.msg}"
+                diagnostic_name = self.save_diagnostic_data()
+                message_end = f"A WebDriverException occurred. This is most likely because it failed to get the page. Check your network settings! Diagnostic data has been saved to diagnostics/{diagnostic_name}. The error message is printed below:\n{exception.msg}"
                 send_email = False
             case _ as error:
-                message_end = f"A {type(exception)} occurred. Error output message: {str(exception)}"
+                diagnostic_name = self.save_diagnostic_data()
+                message_end = f"A {type(exception)} occurred. Diagnostics saved to diagnostics/{diagnostic_name}. Error output message: {str(exception)}"
         
         self.failure_response(message_start + message_end, send_email)
     
@@ -154,6 +158,28 @@ class SiteManager:
         else: # if product is still not available, send emails
             print(f"Site '{self.name}' tested negative and will continue running.")
         self.test_met = False
+    
+    def save_diagnostic_data(self):
+        '''Creates a new folder in the diagnostic folder with a screenshot of the browser's current state, and a saved version of the page source code.'''
+        diagnostics_folder = Path('./diagnostics')
+        save_folder_name = self.name + datetime.datetime.now().strftime('%m%d%Y-%H%M%S')
+        full_folder = diagnostics_folder / save_folder_name
+        if not full_folder.exists():
+            full_folder.mkdir()
+        
+        screenshot_path = full_folder / 'screenshot.png'
+        html_path = full_folder / 'page_source.html'
+
+        try:
+            self.driver.save_screenshot(str(screenshot_path.absolute()))
+            page_source = self.driver.page_source
+            html_path.write_text(page_source)
+        except Exception as error:
+            print(f"[DIAGNOSTICS ERROR] Diagnostic data save failed for site '{self.name}'. Error message below:")
+            print(error)
+        else:
+            print(f"[DIAGNOSTICS] Diagnostic data for site '{self.name}' saved to diagnostics/{save_folder_name}")
+        return save_folder_name
 
     def stop(self):
         '''Sets state to disabled. Should also perform any necessary cleanup.'''

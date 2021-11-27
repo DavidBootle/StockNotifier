@@ -13,6 +13,7 @@ class App:
     def __init__(self):
         self.site_managers: list[SiteManager] = []
         self.load_config_file()
+        self.load_diagnostic_folder()
 
         self.wait_time: (int | float) = self.config.get('waitTime') if self.config.get('waitTime') else 0
 
@@ -72,6 +73,11 @@ class App:
                 time.sleep(self.wait_time)
         print('No sites are still running! The program will now exit.')
         self.stop()
+    
+    def load_diagnostic_folder(self):
+        diagnostics_folder = Path('.') / 'diagnostics'
+        if not diagnostics_folder.exists():
+            diagnostics_folder.mkdir()
     
     def stop(self):
         self.driver.quit()
