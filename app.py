@@ -57,17 +57,16 @@ class App:
 
     def run(self):
         '''Starts running the app. This includes starting up webdrivers and actively performing testing.'''
-        self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(10)
-        # update driver for site_managers
-        for site_manager in self.site_managers:
-            site_manager.driver = self.driver
         while len(self.site_managers) > 0:
+            driver = webdriver.Firefox()
+            driver.implicitly_wait(10)
             tmp_site_managers = self.site_managers.copy()
             for site_manager in tmp_site_managers:
+                site_manager.driver = driver
                 site_enabled = site_manager.run()
                 if not site_enabled:
                     self.site_managers.remove(site_manager)
+            driver.quit()
             if self.wait_time > 0:
                 print(f'Waiting {self.wait_time} seconds according to config...')
                 time.sleep(self.wait_time)
