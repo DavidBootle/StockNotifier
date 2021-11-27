@@ -3,3 +3,4 @@ __pycache__
 geckodriver
 geckodriver.log
 sites
+diagnostics
